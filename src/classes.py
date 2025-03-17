@@ -35,10 +35,7 @@ class Publisher:
     def publish(self, message):
         self._message_queue.put(message)
         for subscriber in self._subscribers:
-            try:
-                subscriber.receive(message)
-            except Exception as e:
-                print("lol")
+            subscriber.receive(message)
 
 
 class Subscriber:
@@ -65,7 +62,6 @@ class RapportDownloader(Publisher):
         for brnum in self.data[: self.limit]:
             file_path = f"{self.out_dir}/{str(brnum)}.pdf"
             self.publish(brnum)
-            print(file_path)
 
 
 class Metadata(Subscriber):
@@ -78,6 +74,5 @@ class Metadata(Subscriber):
         pass
 
     def receive(self, message):
-        self.foo = self.foo.append(message)
-        print(self.foo)
+        print(message)
         pass
