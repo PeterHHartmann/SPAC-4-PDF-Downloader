@@ -1,0 +1,19 @@
+@startuml SequenceDiagram
+actor User as user
+boundary main
+user -> main : start
+create control ExcelReader as reader
+main -> reader : new
+main -> reader : read()
+collections RapportDataSource as datasource
+reader -> datasource : read data
+datasource --> reader : data
+reader --> main : data
+create control RapportDownloader as downloader
+main -> downloader : new
+main -> downloader : download (data, out_dir)
+downloader -> downloader : ensure_output_dir()
+loop For each row in data
+    downloader -> downloader : download_pdf()
+end
+@enduml

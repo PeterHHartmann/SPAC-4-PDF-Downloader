@@ -1,0 +1,27 @@
+@startuml @startuml PDFDownloader Class Diagram
+class ExcelReader {
+    + file_path : str
+    + limit : int
+    + read() : DataFrame
+}
+class RapportDownloader {
+    + multithreaded_off : bool
+    - {static} process_single_entry(brnum: int, pdf_url: str, html_address: str, out_dir: str  )
+    - validate_downloaded_pdf(file_path: str) : bool
+    - __parallel_download(data: DataFrame, out_dir: str, num_workers: int = None) : None
+    - __single_thread_download(data: DataFrame, out_dir: str) : None
+    + download(data: DataFrame, out_dir: str) : None
+}
+class Metadata {
+    + out_dir : str
+    + out_file : str
+    + download_output_dir : str
+    + save(data: DataFrame) : None
+}
+class TermColor {
+    + {static} success() : str
+    + {static} info() : str
+    + {static} warn() : str
+    + {static} fail() : str
+}
+@enduml
