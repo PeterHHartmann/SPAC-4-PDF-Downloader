@@ -64,24 +64,23 @@ for j in df2.index:
     savefile = str(pth + "dwn/" + str(j) + ".pdf")
     try:
         urllib.request.urlretrieve(df2.at[j, "Pdf_URL"], savefile)
-        # if os.path.isfile(savefile):
-        # try:
-        # pdfFileObj = open(savefile, 'rb')
-        # creating a pdf reader object
-        # pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
-        # with open(savefile, 'rb') as pdfFileObj:
-        # pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
-        # if pdfReader.numPages > 0:
-        # df2.at[j, 'pdf_downloaded'] = "yes"
-        # else:
-        # df2.at[j, 'pdf_downloaded'] = "file_error"
-
-        # except Exception as e:
-        # df2.at[j, 'pdf_downloaded'] = str(e)
-        # print(str(str(j)+" " + str(e)))
-        # else:
-        # df2.at[j, 'pdf_downloaded'] = "404"
-        # print("not a file")
+        if os.path.isfile(savefile):
+            try:
+                pdfFileObj = open(savefile, "rb")
+                # creating a pdf reader object
+                pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
+                with open(savefile, "rb") as pdfFileObj:
+                    pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
+                if pdfReader.numPages > 0:
+                    df2.at[j, "pdf_downloaded"] = "yes"
+                else:
+                    df2.at[j, "pdf_downloaded"] = "file_error"
+            except Exception as e:
+                df2.at[j, "pdf_downloaded"] = str(e)
+                print(str(str(j) + " " + str(e)))
+            else:
+                df2.at[j, "pdf_downloaded"] = "404"
+                print("not a file")
 
     except (
         urllib.error.HTTPError,
