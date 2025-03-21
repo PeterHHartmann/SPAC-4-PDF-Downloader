@@ -7,23 +7,20 @@ from classes import (
 import time
 
 
-def main(limit, multiprocess):
+def main(limit: int, is_multithreaded_off: bool):
     start_time = time.time()
     source_dir = "data"
     source_file = "GRI_2017_2020.xlsx"
     download_output_dir = "downloads"
     metadata_output_dir = "metadata"
-    reader = ExcelReader(os.path.join(source_dir, source_file), limit=limit)
-    data = reader.read()
-    downloader = RapportDownloader(out_dir=download_output_dir)
-    if multiprocess == 1:
-        downloader.parallel_download(data=data, max_workers=12)
-    else:
-        downloader.download_slow()
-    metadata = Metadata(data, metadata_output_dir, source_file, download_output_dir)
-    metadata.save()
+    excel_reader = ExcelReader(os.path.join(source_dir, source_file), limit=limit)
+    data = excel_reader.read()
+    downloader = RapportDownloader(is_multithreaded_off)
+    downloader.download(data=data, out_dir=download_output_dir)
+    metadata = Metadata(metadata_output_dir, source_file, download_output_dir)
+    metadata.save(data)
     print(
-        f"{'Parallel execution time' if multiprocess == 1 else 'Single-threaded execution time'}--- %s seconds ---"
+        f"{'Single-threaded execution time' if is_multithreaded_off else 'Parallel execution time' }--- %s seconds ---"
         % (time.time() - start_time)
     )
 
@@ -40,11 +37,10 @@ if __name__ == "__main__":
         help="Limit the program to a maximum amount of rows to try and download",
     )
     parser.add_argument(
-        "--multiprocess",
-        metavar="Integer",
+        "--multithreaded-off",
+        action="store_true",
         required=False,
-        type=int,
-        help="Chose whether or not to run the program in multiprocessesing mode",
+        help="Disables multithreaded mode",
     )
     args = parser.parse_args()
-    main(limit=args.limit, multiprocess=args.multiprocess)
+    main(limit=args.limit, is_multithreaded_off=args.multithreaded_off)
